@@ -419,97 +419,80 @@
     /* ============================================
        CONTACT FORM
        ============================================ */
-    const ContactForm = {
-        init() {
-            if (!DOM.contactForm) return;
-            this.setupValidation();
-        },
 
-        setupValidation() {
-            const inputs = DOM.contactForm.querySelectorAll('.form-input');
+const ContactForm = {
 
-            inputs.forEach(input => {
-                input.addEventListener('blur', () => this.validateField(input));
-                input.addEventListener('input', () => this.clearError(input));
-            });
+    init() {
 
-            DOM.contactForm.addEventListener('submit', (e) => this.handleSubmit(e));
-        },
+        if (!DOM.contactForm) return;
 
-        validateField(input) {
-            const errorElement = input.nextElementSibling;
-            let isValid = true;
-            let errorMessage = '';
+        DOM.contactForm.addEventListener("submit", this.handleSubmit.bind(this));
 
-            if (input.hasAttribute('required') && !input.value.trim()) {
-                isValid = false;
-                errorMessage = 'This field is required';
-            } else if (input.type === 'email' && input.value) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(input.value)) {
-                    isValid = false;
-                    errorMessage = 'Please enter a valid email address';
-                }
-            }
+    },
 
-            if (!isValid) {
-                input.classList.add('error');
-                if (errorElement && errorElement.classList.contains('form-error')) {
-                    errorElement.textContent = errorMessage;
-                }
-            } else {
-                input.classList.remove('error');
-                if (errorElement && errorElement.classList.contains('form-error')) {
-                    errorElement.textContent = '';
-                }
-            }
+    validateField(input) {
 
-            return isValid;
-        },
+        if (input.value.trim() === "") {
 
-        clearError(input) {
-            if (input.classList.contains('error')) {
-                input.classList.remove('error');
-                const errorElement = input.nextElementSibling;
-                if (errorElement && errorElement.classList.contains('form-error')) {
-                    errorElement.textContent = '';
-                }
-            }
-        },
+            input.focus();
 
-        handleSubmit(e) {
-            e.preventDefault();
+            return false;
 
-            const inputs = DOM.contactForm.querySelectorAll('.form-input');
-            let isFormValid = true;
-
-            inputs.forEach(input => {
-                if (!this.validateField(input)) {
-                    isFormValid = false;
-                }
-            });
-
-            if (!isFormValid) return;
-
-            const submitButton = DOM.contactForm.querySelector('.form-submit');
-            submitButton.classList.add('loading');
-            submitButton.disabled = true;
-
-            setTimeout(() => {
-                submitButton.classList.remove('loading');
-                submitButton.disabled = false;
-
-                DOM.formStatus.classList.add('success');
-                DOM.formStatus.textContent = 'Thank you! Your message has been sent successfully.';
-                DOM.contactForm.reset();
-
-                setTimeout(() => {
-                    DOM.formStatus.classList.remove('success');
-                    DOM.formStatus.textContent = '';
-                }, 5000);
-            }, 1500);
         }
-    };
+
+        return true;
+
+    },
+
+    handleSubmit(e) {
+
+        e.preventDefault();
+
+        const inputs = DOM.contactForm.querySelectorAll(".form-input");
+
+        for (const input of inputs) {
+
+            if (!this.validateField(input)) return;
+
+        }
+
+        const submitButton = DOM.contactForm.querySelector(".form-submit");
+
+        submitButton.disabled = true;
+
+        const name = document.getElementById("name").value.trim();
+
+        const email = document.getElementById("email").value.trim();
+
+        const subject = document.getElementById("subject").value.trim();
+
+        const message = document.getElementById("message").value.trim();
+
+        const phone = "916299873334";
+
+        const text = `*New Portfolio Lead*
+
+👤 Name: ${name}
+
+📧 Email: ${email}
+
+📌 Subject: ${subject}
+
+💬 Message:
+${message}`;
+
+        window.open(
+            `https://wa.me/${phone}?text=${encodeURIComponent(text)}`,
+            "_blank"
+        );
+
+        DOM.contactForm.reset();
+
+        submitButton.disabled = false;
+
+    }
+
+};
 
     /* ============================================
        FOOTER
